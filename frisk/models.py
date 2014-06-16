@@ -1,24 +1,38 @@
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer, ForeignKey, Unicode
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from hashlib import sha1
+import os
 
 Base = declarative_base()
 
 class FileHashes(Base):
     __tablename__ = 'file_hashes'
 
-    hash_id = Column(Unicode(40), primary_key=True)
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    hash_id = Column(Unicode(40))
+    files = relationship("CheckedFile", backref="hash")
 
-class FilePath(Base):
-    __tablename__ = 'file_path'
+    def __init__(self, hash_id):
+        self.hash_id = hash_id
 
-    path_id = Column(Integer, autoincrement=True, primary_key=True)
-    hash_id = Column(Unicode(40), ForeignKey('file_hashes.hash_id'))
+    def __repr__(self):
+        return '<FileHash: {}>'.format(self.hash_id)
+
+class CheckedFile(Base):
+    __tablename__ = 'checked_file'
+
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    hash_id = Column(Integer, ForeignKey('file_hashes.id'))
     path = Column(Unicode(255))
 
     def __init__(self, filepath):
-        self.path = filepath
+        # Double check we're receiving a valid file path
+        if os.path.exists(filepath):
+            self.path = filepath
+
+    def __repr__(self):
+        return '<File: {}>'.format(self.path)
 
     def calculate_hash(self, filepath):
         # From Ben's comments on StackOverflow (http://stackoverflow.com/a/19711609/2809087)
@@ -36,4 +50,4 @@ class FilePath(Base):
             return False
 
     def get_hash(self):
-        return self.calculate_hash(filepath)
+        return self.calculate_hash(self.path)
