@@ -38,8 +38,9 @@ class Frisk():
                 new_entry.hash_id = existing_hash.id
             else:
                 new_hash = FileHashes(file_hash)
-                new_entry.hash_id = new_hash.id
                 self.session.add(new_hash)
+                self.session.commit()
+                new_entry.hash_id = new_hash.id
             self.session.add(new_entry)
             self.session.commit()
 

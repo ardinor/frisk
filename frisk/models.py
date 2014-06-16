@@ -23,6 +23,7 @@ class CheckedFile(Base):
     __tablename__ = 'checked_file'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
+    # Access the the file_hashes using 'hash'
     hash_id = Column(Integer, ForeignKey('file_hashes.id'))
     path = Column(Unicode(255))
 
