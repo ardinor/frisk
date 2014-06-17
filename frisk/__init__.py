@@ -8,8 +8,11 @@ from frisk.models import Base, FileHashes, CheckedFile
 
 class Frisk():
 
-    def __init__(self, folder):
-        self.folder = folder
+    def __init__(self, base_folder=None, single_file=None):
+        if base_folder:
+            self.base_folder = base_folder
+        if single_file:
+            self.single_file = single_file
         self.engine = self.get_engine()
         self.Session = self.get_session(Base, self.engine)
         self.session = self.Session()
@@ -50,5 +53,8 @@ class Frisk():
                 self.check_file(os.path.join(dirpath, file))
 
     def run(self):
-        self.check_path(self.folder)
+        if self.base_folder:
+            self.check_path(self.base_folder)
+        elif self.single_file:
+            print('g')
 
