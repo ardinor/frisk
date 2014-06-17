@@ -13,6 +13,8 @@ if __name__ == "__main__":
         If multiple folders are, all will be scanned.""")
     arg_parser.add_argument('--check-file', '-c', type=str, dest='check_file',
         help="Check a single file against the database.")
+    arg_parser.add_argument('--check-name', '-cn', type=str, dest='check_name',
+        help="Check the name of a file against the database, if it exists it will return it's location.")
 
     args = arg_parser.parse_args()
 
@@ -31,3 +33,7 @@ if __name__ == "__main__":
             #frisk.run()
         else:
             print("Invalid path - {}".format(args.check_file))
+    elif args.check_name:
+        frisk = Frisk(single_name=args.check_name)
+        result = frisk.run()
+        print(result)

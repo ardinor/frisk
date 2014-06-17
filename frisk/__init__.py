@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql.expression import func
 import os
 
 from frisk.settings import DATABASE_URI
@@ -8,11 +9,10 @@ from frisk.models import Base, FileHashes, CheckedFile
 
 class Frisk():
 
-    def __init__(self, base_folder=None, single_file=None):
-        if base_folder:
-            self.base_folder = base_folder
-        if single_file:
-            self.single_file = single_file
+    def __init__(self, base_folder=None, single_file=None, single_name=None):
+        self.base_folder = base_folder
+        self.single_file = single_file
+        self.single_name = single_name
         self.engine = self.get_engine()
         self.Session = self.get_session(Base, self.engine)
         self.session = self.Session()
@@ -52,9 +52,26 @@ class Frisk():
             for file in filenames:
                 self.check_file(os.path.join(dirpath, file))
 
+    def check_name(self, name):
+        results = ''
+        existing_entry = self.session.query(CheckedFile). \
+            filter(func.lower(CheckedFile.path).like('%{}%'.format(name.lower())))
+        if existing_entry.count() > 0:
+            if existing_entry.count() > 1:
+                for found_entry in existing_entry.all():
+                    results += 'File exists - {}'.format(found_entry.path) +'\n'
+            else:
+                results += 'File exists - {}'.format(existing_entry.one().path)
+        else:
+            results += 'No file with the name {} found.'.format(name)
+        return results.strip()
+
     def run(self):
         if self.base_folder:
             self.check_path(self.base_folder)
         elif self.single_file:
             print('g')
+        elif self.single_name:
+            result = self.check_name(self.single_name)
+            return result
 
