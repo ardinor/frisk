@@ -50,20 +50,22 @@ class Frisk():
     def check_path(self, folder):
         for dirpath, dirnames, filenames in os.walk(folder):
             for file in filenames:
-                self.check_file(os.path.join(dirpath, file))
+                self.check_file(os.path.normpath(os.path.join(dirpath, file)))
 
     def check_name(self, name):
         results = ''
+        # When searching, search using lower case so users don't need to put
+        # the correct case in when searching.
         existing_entry = self.session.query(CheckedFile). \
             filter(func.lower(CheckedFile.path).like('%{}%'.format(name.lower())))
         if existing_entry.count() > 0:
             if existing_entry.count() > 1:
                 for found_entry in existing_entry.all():
-                    results += 'File exists - {}'.format(found_entry.path) +'\n'
+                    results += 'File found - {}'.format(os.path.normpath(found_entry.path)) +'\n'
             else:
-                results += 'File exists - {}'.format(existing_entry.one().path)
+                results += 'File found - {}'.format(os.path.normpath(existing_entry.one().path))
         else:
-            results += 'No file with the name {} found.'.format(name)
+            results += "No file with the name '{}' found in the database.".format(name)
         return results.strip()
 
     def run(self):

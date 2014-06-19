@@ -2,12 +2,12 @@ import argparse
 import os
 
 from frisk import Frisk
-from frisk.settings import VERSION
+from frisk.settings import __version__
 
 if __name__ == "__main__":
 
     arg_parser = argparse.ArgumentParser(description='Frisk - Simple duplicate detector.')
-    arg_parser.add_argument('--version', action='version', version='Frisk v{}'.format(VERSION))
+    arg_parser.add_argument('--version', action='version', version='Frisk v{}'.format(__version__))
     arg_parser.add_argument('initial_path', type=str, nargs='*',
         help="""The base folder from which to scan, looking for duplicates in it and subfolders.
         If multiple folders are, all will be scanned.""")
