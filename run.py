@@ -22,18 +22,18 @@ if __name__ == "__main__":
         for path in args.initial_path:
             if os.path.exists(path):
                 print(path)
-                #frisk = Frisk(base_folder=args.initial_path)
-                #frisk.run()
+                #f = Frisk(base_folder=args.initial_path)
+                #f.run()
             else:
                 print("Invalid path - {}".format(path))
     elif args.check_file:
         if os.path.exists(args.check_file):
             print(args.check_file)
-            #frisk = Frisk(single_file=args.check_file)
-            #frisk.run()
+            #f = Frisk(single_file=args.check_file)
+            #f.run()
         else:
             print("Invalid path - {}".format(args.check_file))
     elif args.check_name:
-        frisk = Frisk(single_name=args.check_name)
-        result = frisk.run()
+        f = Frisk(single_name=args.check_name)
+        result = folders.run()
         print(result)

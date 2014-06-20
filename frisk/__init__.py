@@ -72,7 +72,7 @@ class Frisk():
         if self.base_folder:
             self.check_path(self.base_folder)
         elif self.single_file:
-            print('g')
+            self.check_file(self.single_file)
         elif self.single_name:
             result = self.check_name(self.single_name)
             return result
